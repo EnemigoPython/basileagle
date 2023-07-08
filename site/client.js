@@ -1,5 +1,5 @@
 async function getData() {
-    const res = await fetch("server.php");
+    const res = await fetch("server.php?action=storyText");
     console.log(res);
     return await res.json()
 }

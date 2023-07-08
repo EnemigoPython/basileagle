@@ -22,6 +22,13 @@ function returnData($query) {
     }
     return json_encode($jsonData);
 }
-echo returnData("SELECT * FROM story_text");
 
+switch ($_GET['action']) {
+    case "storyText":
+        echo returnData("SELECT * FROM story_text");
+        exit;
+    default:
+        echo json_encode(null);
+        exit;
+}
 ?>
