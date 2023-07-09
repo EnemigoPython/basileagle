@@ -8,3 +8,8 @@ window.onload = async () => {
     let someData = await getData();
     console.log(someData);
 };
+
+document.getElementById("testBtn").addEventListener("click", e => {
+    var audio = new Audio('stories/test.wav');
+    audio.play();
+}); 
