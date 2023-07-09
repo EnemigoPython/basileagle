@@ -1,3 +1,4 @@
 .env
 .htaccess
 ideas.txt
+deploy.ps1
