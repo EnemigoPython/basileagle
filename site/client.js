@@ -7,11 +7,39 @@ const credits = document.getElementById('credits');
 
 const sectionsY = [0].concat(...[library, about, contact, credits].map(s => s.offsetTop));
 const navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
-    .map(n => n.offsetTop)
-    .splice(0, 5);
+    .map(n => n.offsetTop);
 const heightPerSection = window.innerHeight / (sectionsY.length + 1);
-navProgress.style.top = `${navLinksY[1]}px`;
 console.log(sectionsY, navLinksY);
+
+document.querySelectorAll('.side-nav-item')[2].querySelector('a').style.color = 'black';
+
+const options = {
+    root: navProgress,
+    rootMargin: "0px",
+    threshold: 0.7,
+  };
+
+// const blackText = (entries, observer) => {
+//     entries.forEach((entry) => {
+//         console.log(entry);
+//         console.log(observer);
+//         if (entry.isIntersecting) {
+//             entry.target.querySelector('a').style.color = 'black';
+//             // console.log(true, target);
+//         } else {
+//             entry.target.querySelector('a').style.color = 'white';
+//         }
+//     });
+// }
+  
+//   const observer = new IntersectionObserver(blackText, options);
+
+//   Array.from(document.querySelectorAll('.side-nav-item')).forEach(n => {
+//     observer.observe(n);
+//   });
+
+
+  
 // const data = [
 //     { name: 'John', age: 30, city: 'New York' },
 //     { name: 'Jane', age: 25, city: 'Los Angeles' },
