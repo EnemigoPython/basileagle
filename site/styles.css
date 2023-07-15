@@ -1,25 +1,191 @@
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  color: white;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+body {
+  background-image: url('assets/space.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+}
+
+::-webkit-scrollbar { 
+  display: none; 
+}
+
 nav {
-    background-color: #333;
-    padding: 10px;
-  }
-  
-  ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-  }
-  
-  li {
-    display: inline;
-  }
-  
-  a {
-    color: white;
-    text-decoration: none;
-    padding: 10px;
-  }
-  
-  a:hover {
-    background-color: #555;
-  }
-  
+  padding: 10px;
+  position: fixed;
+  opacity: 0;
+  height: 100%;
+  left: 5%;
+  margin-bottom: 20%;
+}
+
+#nav-progress {
+  position: absolute;
+  background-color: white;
+  width: 50px;
+  height: 30px;
+}
+
+#main-title {
+  font-family: 'Lobster', cursive;
+  text-align: center;
+}
+
+#top-nav {
+  margin-top: -10px;
+  flex-direction: row;
+}
+
+section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 3%;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+#library {
+  flex-direction: column;
+}
+
+.top-nav-item {
+  margin: 40px;
+}
+
+ul {
+  position: absolute;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  /* margin: 0 10px; */
+}
+
+a {
+color: white;
+text-decoration: none;
+padding: 10px;
+}
+
+a:hover:not(#github-link) {
+background-color: #55555577;
+}
+
+.separator {
+  margin: 0 5px;
+  cursor: default;
+}
+
+#books-outer {
+    justify-content: center;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#books-inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 80%;
+}
+
+.book {
+  width: 150px;
+  height: 200px;
+  border: 1px solid #CCCCCC;
+  border-radius: 5px;
+  margin: 30px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #F2F2F2;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s, filter 0.3s;
+}
+
+.book:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('assets/book-cover-image.jpg');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.7;
+}
+
+.book:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30%;
+  background-color: #000;
+  opacity: 0.5;
+}
+
+.book:hover {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+  cursor: pointer;
+}
+
+.book-title {
+  position: absolute;
+  bottom: 40px;
+  left: 10px;
+  color: #FFF;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.book-author {
+  position: absolute;
+  bottom: 20px;
+  left: 10px;
+  color: #FFF;
+  font-size: 12px;
+}
+
+#github-container {
+  position: fixed;
+  bottom: 20px; /* Adjust the distance from the bottom */
+  right: 20px;
+}
+
+#github {
+  width: 50px;
+  height: 50px;
+}
+
+#github:hover {
+  filter: brightness(1.5);
+  cursor: pointer;
+}
