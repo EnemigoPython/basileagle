@@ -13,31 +13,6 @@ console.log(sectionsY, navLinksY);
 
 // document.querySelectorAll('.side-nav-item')[2].querySelector('a').style.color = 'black';
 
-const options = {
-    root: navProgress,
-    rootMargin: "0px",
-    threshold: 0.7,
-  };
-
-// const blackText = (entries, observer) => {
-//     entries.forEach((entry) => {
-//         console.log(entry);
-//         console.log(observer);
-//         if (entry.isIntersecting) {
-//             entry.target.querySelector('a').style.color = 'black';
-//             // console.log(true, target);
-//         } else {
-//             entry.target.querySelector('a').style.color = 'white';
-//         }
-//     });
-// }
-  
-//   const observer = new IntersectionObserver(blackText, options);
-
-//   Array.from(document.querySelectorAll('.side-nav-item')).forEach(n => {
-//     observer.observe(n);
-//   });
-
 
   
 // const data = [
@@ -93,10 +68,18 @@ document.addEventListener('scroll', _ => {
     const scrollSectionHeight = nextSection - currSection;
     const scrollProgress = scrollY - currSection;
     const scrollPercent = parseFloat((scrollProgress / scrollSectionHeight).toFixed(2));
-    console.log(scrollPercent);
     const nextNav = navLinksY[nextSectionIdx];
     const currNav = navLinksY[nextSectionIdx-1];
     const scrollNavHeight = nextNav - currNav;
     const navCurrProgress = scrollNavHeight * scrollPercent;
-    navProgress.style.top = `${currNav + navCurrProgress}px`;
+    const navCurrPosition = currNav + navCurrProgress - 8;
+    navProgress.style.top = `${navCurrPosition}px`;
+    Array.from(document.querySelectorAll('.side-nav-item')).forEach((n, i) => {
+        if (Math.abs(navCurrPosition - n.offsetTop) < 22 ||
+                isNaN(navCurrPosition) && i == 4) {
+            n.querySelector('a').style.color = 'black';
+        } else {
+            n.querySelector('a').style.color = 'white';
+        }
+    })
 });
