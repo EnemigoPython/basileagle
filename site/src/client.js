@@ -79,8 +79,8 @@ document.addEventListener('scroll', _ => {
     const navCurrPosition = currNav + navCurrProgress - 8;
     navProgress.style.top = `${navCurrPosition}px`;
     Array.from(document.querySelectorAll('.side-nav-item')).forEach((n, i) => {
-        if (Math.abs(navCurrPosition + 3 - n.offsetTop) < 22 ||
-                isNaN(navCurrPosition) && i == 4) {
+        if ((Math.abs(navCurrPosition + 3 - n.offsetTop) < 22 ||
+                isNaN(navCurrPosition) && i == 4) || i == 0) {
             n.querySelector('a').style.color = 'black';
         } else {
             n.querySelector('a').style.color = 'white';
