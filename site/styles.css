@@ -22,6 +22,43 @@ body {
   display: none; 
 }
 
+dialog {
+  z-index: 100;
+}
+
+dialog::backdrop {
+  background-color: #3333336c;
+}
+
+
+#open-book {
+  width: 600px;
+  height: 400px;
+  position: relative;
+  margin: 0 auto;
+  perspective: 1200px;
+}
+
+#open-book .left-page,
+#open-book .right-page {
+  background-color: white;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  transform-style: preserve-3d;
+  transform-origin: right center;
+  transition: transform 0.5s;
+  box-shadow: 0 0 10px rgba(15, 15, 15, 0.1);
+}
+
+#open-book .right-page {
+  left: 50%;
+  transform-origin: left center;
+  display: flex;
+  flex-direction: column;
+}
+
 nav {
   padding: 10px;
   position: fixed;
@@ -88,7 +125,7 @@ text-decoration: none;
 padding: 10px;
 }
 
-a:hover:not(#github-link) {
+a:hover:not(#github-link, .side-nav-link) {
 background-color: #55555577;
 }
 

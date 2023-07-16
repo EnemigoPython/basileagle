@@ -1,3 +1,5 @@
+const dialog = document.querySelector('dialog');
+const openBook = document.getElementById('open-book');
 const sideNav = document.getElementById('side-nav');
 const navProgress = document.getElementById('nav-progress');
 const library = document.getElementById('library');
@@ -11,7 +13,24 @@ const navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
 const heightPerSection = window.innerHeight / (sectionsY.length + 1);
 console.log(sectionsY, navLinksY);
 
-// document.querySelectorAll('.side-nav-item')[2].querySelector('a').style.color = 'black';
+document.querySelectorAll('.book').forEach(book => {
+    book.addEventListener('click', _ => {
+        dialog.showModal();
+    });
+});
+
+dialog.addEventListener("click", e => {
+    const dialogDimensions = dialog.getBoundingClientRect()
+    if (
+      e.clientX < dialogDimensions.left ||
+      e.clientX > dialogDimensions.right ||
+      e.clientY < dialogDimensions.top ||
+      e.clientY > dialogDimensions.bottom
+    ) {
+      dialog.close()
+    }
+});
+
 
 
   
@@ -75,7 +94,7 @@ document.addEventListener('scroll', _ => {
     const navCurrPosition = currNav + navCurrProgress - 8;
     navProgress.style.top = `${navCurrPosition}px`;
     Array.from(document.querySelectorAll('.side-nav-item')).forEach((n, i) => {
-        if (Math.abs(navCurrPosition - n.offsetTop) < 22 ||
+        if (Math.abs(navCurrPosition + 3 - n.offsetTop) < 22 ||
                 isNaN(navCurrPosition) && i == 4) {
             n.querySelector('a').style.color = 'black';
         } else {

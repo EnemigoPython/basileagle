@@ -13,20 +13,28 @@
     <script src="./client.js" defer></script>
 </head>
 <body id="top">
-    <dialog open>
-        <p>Greetings, one and all!</p>
-        <form method="dialog">
-            <button>OK</button>
-        </form>
+    <dialog>
+        <div id="open-book">
+            <div class="left-page">
+              <p>Book</p>
+            </div>
+            <div class="right-page">
+                <p>About the author:</p>
+              <audio controls>
+                <!-- <source src="horse.ogg" type="audio/ogg"> -->
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          </div>
     </dialog>
     <nav id="side-nav">
         <ul>
             <div id="nav-progress"></div>
-            <li class="side-nav-item"><a href="#top">^</a></li>
-            <li class="side-nav-item"><a href="#library">Library</a></li>
-            <li class="side-nav-item"><a href="#about">About</a></li>
-            <li class="side-nav-item"><a href="#credits">Credits</a></li>
-            <li class="side-nav-item"><a href="#contact">Contact</a></li>
+            <li class="side-nav-item"><a class="side-nav-link" href="#top">^</a></li>
+            <li class="side-nav-item"><a class="side-nav-link" href="#library">Library</a></li>
+            <li class="side-nav-item"><a class="side-nav-link" href="#about">About</a></li>
+            <li class="side-nav-item"><a class="side-nav-link" href="#credits">Credits</a></li>
+            <li class="side-nav-item"><a class="side-nav-link" href="#contact">Contact</a></li>
         </ul>
   </nav>
   <div>
