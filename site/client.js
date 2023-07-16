@@ -5,13 +5,13 @@ const about = document.getElementById('about');
 const contact = document.getElementById('contact');
 const credits = document.getElementById('credits');
 
-const sectionsY = [0].concat(...[library, about, contact, credits].map(s => s.offsetTop));
+const sectionsY = [0].concat(...[library, about, credits, contact].map(s => s.offsetTop));
 const navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
     .map(n => n.offsetTop);
 const heightPerSection = window.innerHeight / (sectionsY.length + 1);
 console.log(sectionsY, navLinksY);
 
-document.querySelectorAll('.side-nav-item')[2].querySelector('a').style.color = 'black';
+// document.querySelectorAll('.side-nav-item')[2].querySelector('a').style.color = 'black';
 
 const options = {
     root: navProgress,
@@ -91,14 +91,12 @@ document.addEventListener('scroll', _ => {
     const nextSection = sectionsY[nextSectionIdx];
     const currSection = scrollY < sectionsY[0] ? 0 : sectionsY[nextSectionIdx-1];
     const scrollSectionHeight = nextSection - currSection;
-    const currScrollInSection = scrollY - currSection;
-    const scrollSectionPercentage = (currScrollInSection / scrollSectionHeight) * 100;
-    const navProgressOffset = heightPerSection * Math.max(nextSectionIdx, 1);
-    const navProgressSectionScroll = (scrollSectionPercentage / heightPerSection) * 100;
-    const navProgressPos = navProgressOffset + navProgressSectionScroll;
-    // navProgress.style.top = `${navProgressPos}px`;
-    // console.log(nextSection, currSection, scrollY, currScrollInSection, scrollSectionPercentage, navProgressPos)
-    // console.log(navProgressPos);
-    // console.log(navProgressOffset, navProgressSectionScroll, scrollSectionPercentage);
-    // console.log(nextSection, currSection, scrollSectionPercentage, navProgressOffset);
+    const scrollProgress = scrollY - currSection;
+    const scrollPercent = parseFloat((scrollProgress / scrollSectionHeight).toFixed(2));
+    console.log(scrollPercent);
+    const nextNav = navLinksY[nextSectionIdx];
+    const currNav = navLinksY[nextSectionIdx-1];
+    const scrollNavHeight = nextNav - currNav;
+    const navCurrProgress = scrollNavHeight * scrollPercent;
+    navProgress.style.top = `${currNav + navCurrProgress}px`;
 });
