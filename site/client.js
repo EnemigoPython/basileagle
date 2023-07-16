@@ -7,11 +7,27 @@ const about = document.getElementById('about');
 const contact = document.getElementById('contact');
 const credits = document.getElementById('credits');
 
-const sectionsY = [0].concat(...[library, about, credits, contact].map(s => s.offsetTop));
-const navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
+let sectionsY = [0].concat(...[library, about, credits, contact].map(s => s.offsetTop));
+let navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
     .map(n => n.offsetTop);
-const heightPerSection = window.innerHeight / (sectionsY.length + 1);
-console.log(sectionsY, navLinksY);
+let heightPerSection = window.innerHeight / (sectionsY.length + 1);
+
+onresize = (_) => {
+    sectionsY = [0].concat(...[library, about, credits, contact].map(s => s.offsetTop));
+    navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
+        .map(n => n.offsetTop);
+    heightPerSection = window.innerHeight / (sectionsY.length + 1);
+};
+
+fetch('content/stories/index.json')
+  .then(response => response.json())
+  .then(data => {
+    // Do something with the loaded JSON data
+    console.log(data);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
 
 document.querySelectorAll('.book').forEach(book => {
     book.addEventListener('click', _ => {
@@ -20,58 +36,27 @@ document.querySelectorAll('.book').forEach(book => {
 });
 
 dialog.addEventListener("click", e => {
-    const dialogDimensions = dialog.getBoundingClientRect()
+    const dialogDimensions = dialog.getBoundingClientRect();
     if (
       e.clientX < dialogDimensions.left ||
       e.clientX > dialogDimensions.right ||
       e.clientY < dialogDimensions.top ||
       e.clientY > dialogDimensions.bottom
     ) {
-      dialog.close()
+      dialog.close();
     }
 });
 
+// async function getData() {
+//     const res = await fetch("server.php?action=storyText");
+//     console.log(res);
+//     return await res.json()
+// }
 
-
-  
-// const data = [
-//     { name: 'John', age: 30, city: 'New York' },
-//     { name: 'Jane', age: 25, city: 'Los Angeles' },
-//     { name: 'Mark', age: 35, city: 'Chicago' }
-//   ];
-  
-//   const container = document.getElementById('output');
-  
-//   data.forEach(item => {
-//     const block = document.createElement('div');
-//     block.classList.add('block');
-    
-//     const name = document.createElement('p');
-//     name.textContent = `Name: ${item.name}`;
-    
-//     const age = document.createElement('p');
-//     age.textContent = `Age: ${item.age}`;
-    
-//     const city = document.createElement('p');
-//     city.textContent = `City: ${item.city}`;
-    
-//     block.appendChild(name);
-//     block.appendChild(age);
-//     block.appendChild(city);
-    
-//     container.appendChild(block);
-//   });
-
-async function getData() {
-    const res = await fetch("server.php?action=storyText");
-    console.log(res);
-    return await res.json()
-}
-
-window.onload = async () => {
-    let someData = await getData();
-    console.log(someData);
-};
+// window.onload = async () => {
+//     let someData = await getData();
+//     console.log(someData);
+// };
 
 document.addEventListener('scroll', _ => {
     if (scrollY < 120) {
