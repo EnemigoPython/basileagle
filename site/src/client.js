@@ -16,6 +16,14 @@ let navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
 let heightPerSection = window.innerHeight / (sectionsY.length + 1);
 let currentBook;
 
+const urlParams = new URLSearchParams(window.location.search);
+const title = urlParams.get('title');
+if (title) {
+  const url = new URL(window.location.href);
+  url.pathname = 'books';
+  window.history.pushState(null, '', url);
+}
+
 
 function recalibrateNav() {
     sectionsY = [0].concat(...[library, about, credits, contact].map(s => s.offsetTop));
