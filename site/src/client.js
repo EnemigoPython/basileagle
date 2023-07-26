@@ -6,34 +6,86 @@ const library = document.getElementById('library');
 const about = document.getElementById('about');
 const contact = document.getElementById('contact');
 const credits = document.getElementById('credits');
+const booksInner = document.getElementById('books-inner');
+const quotation = document.getElementById('quotation');
+const quotationAttribute = document.getElementById('quotation-attribute');
 
 let sectionsY = [0].concat(...[library, about, credits, contact].map(s => s.offsetTop));
 let navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
     .map(n => n.offsetTop);
 let heightPerSection = window.innerHeight / (sectionsY.length + 1);
+let currentBook;
 
-onresize = (_) => {
+
+function recalibrateNav() {
     sectionsY = [0].concat(...[library, about, credits, contact].map(s => s.offsetTop));
     navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
         .map(n => n.offsetTop);
     heightPerSection = window.innerHeight / (sectionsY.length + 1);
+}
+
+onresize = (_) => {
+    recalibrateNav();
 };
 
 fetch('content/stories/index.json')
   .then(response => response.json())
-  .then(data => {
-    // Do something with the loaded JSON data
-    console.log(data);
+  .then(books => {
+    console.log(books);
+    books.forEach(book => {
+        if (book.released) {
+            newBook(book);
+        }
+    });
+    recalibrateNav();
   })
   .catch(error => {
     console.error('Error:', error);
   });
 
-document.querySelectorAll('.book').forEach(book => {
+  fetch('content/quotations.json')
+  .then(response => response.json())
+  .then(quotations => {
+    quotation.textContent = quotations[0].text;
+    quotationAttribute.textContent = '-' + quotations[0].attributed;
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+
+function updateUrlParam(paramName, paramValue, path) {
+  const url = new URL(window.location.href);
+  url.searchParams.set(paramName, paramValue);
+  if (path) {
+    url.pathname = path;
+  }
+  window.history.pushState(null, '', url);
+}
+
+function newBook(bookData) {
+    const book = document.createElement("div");
+    book.className = 'book';
+    const bookTitle = document.createElement("div");
+    bookTitle.className = 'book-title';
+    bookTitle.textContent = bookData.title;
+    const bookAuthor = document.createElement("div");
+    bookAuthor.className = 'book-author';
+    bookAuthor.textContent = bookData.author;
+    const bookImage = document.createElement("img");
+    bookImage.src = `./content/stories/${bookData.slug}/${bookData.slug}.jpg`;
+    bookImage.alt = '';
+    bookImage.style.opacity = 0.5;
+    bookImage.style.zIndex = 0;
+    book.appendChild(bookTitle);
+    book.appendChild(bookAuthor);
+    book.appendChild(bookImage);
+    booksInner.appendChild(book);
     book.addEventListener('click', _ => {
+        currentBook = bookData;
         dialog.showModal();
+        updateUrlParam('title', bookData.slug, 'books');
     });
-});
+}
 
 dialog.addEventListener("click", e => {
     const dialogDimensions = dialog.getBoundingClientRect();
@@ -47,16 +99,10 @@ dialog.addEventListener("click", e => {
     }
 });
 
-// async function getData() {
-//     const res = await fetch("server.php?action=storyText");
-//     console.log(res);
-//     return await res.json()
-// }
+dialog.addEventListener("close", e => {
+  window.history.pushState(null, '', window.location.origin);
+});
 
-// window.onload = async () => {
-//     let someData = await getData();
-//     console.log(someData);
-// };
 
 document.addEventListener('scroll', _ => {
     if (scrollY < 120) {

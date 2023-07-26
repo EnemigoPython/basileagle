@@ -31,6 +31,19 @@ dialog::backdrop {
   background-color: #3333336c;
 }
 
+h2 {
+  text-align: center;
+}
+
+h3 {
+  text-align: right;
+  margin-right: 30%;
+}
+
+.quotation-lines {
+  font-family: 'Crimson Text', serif;
+}
+
 
 #open-book {
   width: 600px;

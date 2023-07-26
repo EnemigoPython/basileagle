@@ -1,5 +1,23 @@
 [
     {
-        "title": "The Trial"
+        "slug": "the-trial",
+        "title": "The Trial",
+        "author": "Franz Kafka",
+        "datePublished": "",
+        "released": "2023-07-22 18:45:59.539918"
+    },
+    {
+        "slug": "the-bank",
+        "title": "The Bank",
+        "author": "Big Bank",
+        "datePublished": "2022-08-10",
+        "released": "2023-07-22 18:36:23.123468"
+    },
+    {
+        "slug": "what-up",
+        "title": "What up",
+        "author": "Me",
+        "datePublished": "2022-08-07",
+        "released": "2023-07-22 18:36:03.819893"
     }
 ]

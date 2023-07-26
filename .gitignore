@@ -1,5 +1,7 @@
 .env
+.venv
 .htaccess
 ideas.txt
 deploy.ps1
+content_util.py
 commands.txt
