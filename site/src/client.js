@@ -16,14 +16,6 @@ let navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
 let heightPerSection = window.innerHeight / (sectionsY.length + 1);
 let currentBook;
 
-const urlParams = new URLSearchParams(window.location.search);
-const title = urlParams.get('title');
-if (title) {
-  const url = new URL(window.location.href);
-  url.pathname = 'books';
-  window.history.pushState(null, '', url);
-}
-
 
 function recalibrateNav() {
     sectionsY = [0].concat(...[library, about, credits, contact].map(s => s.offsetTop));
@@ -45,6 +37,12 @@ fetch('content/stories/index.json')
             newBook(book);
         }
     });
+    const urlParams = new URLSearchParams(window.location.search);
+    const title = urlParams.get('title');
+    if (title) {
+      const bookData = books.find(book => book.slug == title);
+      bookDisplay(bookData);
+}
     recalibrateNav();
   })
   .catch(error => {
@@ -70,6 +68,12 @@ function updateUrlParam(paramName, paramValue, path) {
   window.history.pushState(null, '', url);
 }
 
+function bookDisplay(bookData) {
+  currentBook = bookData;
+  dialog.showModal();
+  updateUrlParam('title', bookData.slug, 'books');
+}
+
 function newBook(bookData) {
     const book = document.createElement("div");
     book.className = 'book';
@@ -89,6 +93,7 @@ function newBook(bookData) {
     book.appendChild(bookImage);
     booksInner.appendChild(book);
     book.addEventListener('click', _ => {
+      bookDisplay(bookData);
         currentBook = bookData;
         dialog.showModal();
         updateUrlParam('title', bookData.slug, 'books');
