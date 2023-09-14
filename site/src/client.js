@@ -9,13 +9,37 @@ const credits = document.getElementById('credits');
 const booksInner = document.getElementById('books-inner');
 const quotation = document.getElementById('quotation');
 const quotationAttribute = document.getElementById('quotation-attribute');
+const openBookTitle = document.getElementById('open-book-title');
+const openBookPublished = document.getElementById('open-book-published');
+const mainAudio = document.getElementById('main-audio');
+
+const bookCoversTotal = 5;
+const startDate = new Date('2023-07-29');
+const dateDelta = getDaysSinceDate(startDate);
+const randomSeed = new Math.seedrandom('book-covers-seed');
+
 
 let sectionsY = [0].concat(...[library, about, credits, contact].map(s => s.offsetTop));
 let navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
     .map(n => n.offsetTop);
 let heightPerSection = window.innerHeight / (sectionsY.length + 1);
-let currentBook;
 
+function getDaysSinceDate(targetDate) {
+  // Get the current date
+  const currentDate = new Date();
+
+  // Convert both dates to UTC to avoid issues with daylight saving time
+  const utcCurrentDate = Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+  const utcTargetDate = Date.UTC(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+
+  // Calculate the difference in milliseconds between the two dates
+  const timeDifferenceMs = utcCurrentDate - utcTargetDate;
+
+  // Convert milliseconds to days (1 day = 24 hours * 60 minutes * 60 seconds * 1000 milliseconds)
+  const daysSince = Math.floor(timeDifferenceMs / (1000 * 60 * 60 * 24));
+
+  return daysSince;
+}
 
 function recalibrateNav() {
     sectionsY = [0].concat(...[library, about, credits, contact].map(s => s.offsetTop));
@@ -31,7 +55,6 @@ onresize = (_) => {
 fetch('content/stories/index.json')
   .then(response => response.json())
   .then(books => {
-    console.log(books);
     books.forEach(book => {
         if (book.released) {
             newBook(book);
@@ -52,8 +75,9 @@ fetch('content/stories/index.json')
   fetch('content/quotations.json')
   .then(response => response.json())
   .then(quotations => {
-    quotation.textContent = quotations[0].text;
-    quotationAttribute.textContent = '-' + quotations[0].attributed;
+    const currentQuotationIndex = dateDelta % quotations.length;
+    quotation.textContent = quotations[currentQuotationIndex].text;
+    quotationAttribute.textContent = '-' + quotations[currentQuotationIndex].attributed;
   })
   .catch(error => {
     console.error('Error:', error);
@@ -68,15 +92,68 @@ function updateUrlParam(paramName, paramValue, path) {
   window.history.pushState(null, '', url);
 }
 
+function formatDate(isoDate) {
+  const dateObj = new Date(isoDate);
+  const year = dateObj.getFullYear();
+  const month = dateObj.getMonth();
+  const day = dateObj.getDate();
+
+  // Function to get the day suffix (st, nd, rd, th)
+  function getDaySuffix(day) {
+    if (day >= 11 && day <= 13) {
+      return "th";
+    }
+    switch (day % 10) {
+      case 1:
+        return "st";
+      case 2:
+        return "nd";
+      case 3:
+        return "rd";
+      default:
+        return "th";
+    }
+  }
+
+  // Array of month names
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June", "July",
+    "August", "September", "October", "November", "December"
+  ];
+
+  // Assemble the formatted string
+  const formattedDate = `${day}${getDaySuffix(day)} of ${monthNames[month]} ${year}`;
+  return formattedDate;
+}
+
 function bookDisplay(bookData) {
-  currentBook = bookData;
   dialog.showModal();
   updateUrlParam('title', bookData.slug, 'books');
+  openBookTitle.textContent = `${bookData.title} by ${bookData.author}`;
+  openBookPublished.textContent = `Published ${formatDate(bookData.datePublished)}`;
+  const audioSource = document.createElement('source');
+  audioSource.src = `../site/content/stories/${bookData.slug}/${bookData.slug}.mp3`;
+  mainAudio.appendChild(audioSource);
+}
+
+function getSeededNumber(limit) {
+  const newRandom = randomSeed().toString().slice(2);
+  for (const c of newRandom) {
+    if (parseInt(c) <= limit) {
+      return c;
+    }
+  }
+  return "1";
 }
 
 function newBook(bookData) {
     const book = document.createElement("div");
-    book.className = 'book';
+    book.setAttribute('data-slug', bookData.slug);
+    book.setAttribute('data-author', bookData.author);
+    book.setAttribute('data-published', bookData.datePublished);
+    book.setAttribute('data-released', bookData.released);
+    const coverNumber = getSeededNumber(bookCoversTotal);
+    book.className = `book book-cover-${coverNumber}`;
     const bookTitle = document.createElement("div");
     bookTitle.className = 'book-title';
     bookTitle.textContent = bookData.title;
@@ -94,9 +171,6 @@ function newBook(bookData) {
     booksInner.appendChild(book);
     book.addEventListener('click', _ => {
       bookDisplay(bookData);
-        currentBook = bookData;
-        dialog.showModal();
-        updateUrlParam('title', bookData.slug, 'books');
     });
 }
 

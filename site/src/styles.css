@@ -73,6 +73,46 @@ h3 {
   flex-direction: column;
 }
 
+#open-book-title {
+}
+
+.left-page-content {
+  margin-left: -35px;
+  margin-right: -35px;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-around;
+  flex-grow: 1; */
+}
+
+.right-page-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+.audio-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#about-the-author {
+  justify-content: space-around;
+  align-items: center;
+  flex-grow: 1;
+  padding: 10px;
+}
+
+#about-the-author audio {
+  width: 75%;
+}
+
+audio {
+  width: 80%;
+}
+
 nav {
   padding: 10px;
   position: fixed;
@@ -131,7 +171,7 @@ section {
   margin: 40px;
 }
 
-ul {
+#side-nav-list {
   position: absolute;
   height: 100%;
   display: flex;
@@ -147,9 +187,9 @@ li {
 }
 
 a {
-color: white;
-text-decoration: none;
-padding: 10px;
+  color: white;
+  text-decoration: none;
+  padding: 10px;
 }
 
 a:hover:not(#github-link, .side-nav-link) {
@@ -181,8 +221,8 @@ p {
 }
 
 .book {
-  width: 150px;
-  height: 200px;
+  width: 165px;
+  height: 240px;
   border: 1px solid #CCCCCC;
   border-radius: 5px;
   margin: 30px;
@@ -204,10 +244,9 @@ p {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('../assets/book-cover-image.jpg');
   background-size: cover;
   background-position: center;
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .book:after {
@@ -216,7 +255,7 @@ p {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 30%;
+  height: 33%;
   background-color: #000;
   opacity: 0.5;
 }
@@ -228,20 +267,49 @@ p {
 }
 
 .book-title {
+  /* z-index: 2; */
+  /* opacity: 0.8; */
   position: absolute;
   bottom: 40px;
   left: 10px;
+  margin-right: 5px;
   color: #FFF;
   font-weight: bold;
   font-size: 16px;
 }
 
 .book-author {
+  /* z-index: 2; */
+  /* opacity: 0.7; */
   position: absolute;
   bottom: 20px;
   left: 10px;
   color: #FFF;
   font-size: 12px;
+}
+
+.book-cover-0::before {
+  background-image: url('../assets/book-cover-1.jpg');
+}
+
+.book-cover-1::before {
+  background-image: url('../assets/book-cover-1.jpg');
+}
+
+.book-cover-2::before {
+  background-image: url('../assets/book-cover-2.jpg');
+}
+
+.book-cover-3::before {
+  background-image: url('../assets/book-cover-3.jpg');
+}
+
+.book-cover-4::before {
+  background-image: url('../assets/book-cover-4.jpg');
+}
+
+.book-cover-5::before {
+  background-image: url('../assets/book-cover-5.jpg');
 }
 
 #github-container {

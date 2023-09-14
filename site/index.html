@@ -11,27 +11,46 @@
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
     <link rel="manifest" href="assets/favicon/site.webmanifest">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js" defer></script> 
     <script src="src/client.js" defer></script>
 </head>
 <body id="top">
     <dialog>
         <div id="open-book">
             <div class="left-page">
-              <p>Book</p>
+                <div class="left-page-content">
+                    <p><b id="open-book-title"></b></p>
+                    <br>
+                    <p id="open-book-published"></p>
+                    <div id="about-the-author" class="audio-section">
+                        <p>About the author:</p>
+                        <audio controls>
+                        Your browser does not support the audio element.
+                      </audio>
+                      <a download="test.txt">Download</a>
+                    </div>
+                </div>
             </div>
             <div class="right-page">
                 <div class="right-page-content">
-                    <p>About the author:</p>
-                  <audio controls>
-                    <!-- <source src="horse.ogg" type="audio/ogg"> -->
-                    Your browser does not support the audio element.
-                  </audio>
+                    <div class="audio-section">
+                        <p>Play:</p>
+                        <audio controls id="main-audio">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                    <div class="audio-section">
+                        <p>Postscript:</p>
+                        <audio controls>
+                        Your browser does not support the audio element.
+                      </audio>
+                    </div>
                 </div>
             </div>
           </div>
     </dialog>
     <nav id="side-nav">
-        <ul>
+        <ul id="side-nav-list">
             <div id="nav-progress"></div>
             <li class="side-nav-item" id="top-arrow"><a class="side-nav-link" href="#top">^</a></li>
             <li class="side-nav-item"><a class="side-nav-link" href="#library">Library</a></li>
@@ -55,13 +74,12 @@
     <div class="top-nav-item"><a href="#credits">Credits</a></div>
     <div class="separator">&middot;</div>
     <div class="top-nav-item"><a href="#contact">Contact</a></div>
-  </section>
-  <section id="library">
+    </section>
+    <section id="library">
     <h1><a href="#library">Library</a></h1>
     <div id="books-outer">
         <div id="books-inner"></div>
     </div>
-
     </section>
     <section id="about">
         <h1><a href="#about">About</a></h1>
@@ -71,9 +89,20 @@
     </section>
     <section id="credits">
         <h1><a href="#credits">Credits</a></h1>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa iusto consequatur cum laboriosam sed harum incidunt adipisci possimus eos, facere cumque quisquam quod praesentium fuga nulla, iure explicabo exercitationem sapiente!</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa iusto consequatur cum laboriosam sed harum incidunt adipisci possimus eos, facere cumque quisquam quod praesentium fuga nulla, iure explicabo exercitationem sapiente!</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa iusto consequatur cum laboriosam sed harum incidunt adipisci possimus eos, facere cumque quisquam quod praesentium fuga nulla, iure explicabo exercitationem sapiente!</p>
+        <p>Thank you to everyone who helped to make this site possible. Below are acknowledgements categorised by type:</p>
+        <p>Assets:</p>
+        <ul>
+            <li>Space background: <a href="https://www.pexels.com/photo/stars-during-night-time-176851/" target="_blank">instawally</a></li>
+            <li>Book textures: <a href="https://lostandtaken.com/downloads/seamless-book-cover-textures-4/" target="_blank">Lost & Taken</a> and <a href="https://www.texturepalace.com/6-quality-vintage-book-texture/" target="_blank">Texture Palace</a></li>
+        </ul>
+        <p>Coding reference:</p>
+        <ul>
+            <li>Dialog element: <a href="https://blog.webdevsimplified.com/2023-04/html-dialog/">Web Dev Simplified</a></li>
+        </ul>
+        <p>Inspiration:</p>
+        <ul>
+            <li><a href="https://open.spotify.com/show/21yjAjzYXD1xCNDad4OdTV" target="_blank">LeVar Burton reads</a></li>
+        </ul>
     </section>
     <section id="contact">
         <h1><a href="#contact">Contact</a></h1>

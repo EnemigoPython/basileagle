@@ -3,21 +3,28 @@
         "slug": "the-trial",
         "title": "The Trial",
         "author": "Franz Kafka",
-        "datePublished": "",
+        "datePublished": "1925-04-26",
         "released": "2023-07-22 18:45:59.539918"
     },
     {
-        "slug": "the-bank",
-        "title": "The Bank",
-        "author": "Big Bank",
-        "datePublished": "2022-08-10",
-        "released": "2023-07-22 18:36:23.123468"
+        "slug": "alice-in-wonderland",
+        "title": "Alice in Wonderland",
+        "author": "Lewis Carroll",
+        "datePublished": "1865-11-01",
+        "released": "2023-07-30 16:27:09.340638"
     },
     {
-        "slug": "what-up",
-        "title": "What up",
-        "author": "Me",
-        "datePublished": "2022-08-07",
-        "released": "2023-07-22 18:36:03.819893"
+        "slug": "notes-from-the-underground",
+        "title": "Notes from the Underground",
+        "author": "Fyodor Dostoevsky",
+        "datePublished": "1864-01-01",
+        "released": "2023-07-30 16:27:21.748189"
+    },
+    {
+        "slug": "the-black-monk",
+        "title": "The Black Monk",
+        "author": "Anton Chekhov",
+        "datePublished": "1894-01-01",
+        "released": "2023-08-12 16:25:57.937107"
     }
 ]
