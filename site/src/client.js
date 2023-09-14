@@ -17,6 +17,7 @@ const bookCoversTotal = 5;
 const startDate = new Date('2023-07-29');
 const dateDelta = getDaysSinceDate(startDate);
 const randomSeed = new Math.seedrandom('book-covers-seed');
+const isDev = new URL(window.location).origin === 'http://127.0.0.1:5500';
 
 
 let sectionsY = [0].concat(...[library, about, credits, contact].map(s => s.offsetTop));
@@ -132,7 +133,9 @@ function bookDisplay(bookData) {
   openBookTitle.textContent = `${bookData.title} by ${bookData.author}`;
   openBookPublished.textContent = `Published ${formatDate(bookData.datePublished)}`;
   const audioSource = document.createElement('source');
-  audioSource.src = `../site/content/stories/${bookData.slug}/${bookData.slug}.mp3`;
+  audioSource.src = isDev ? 
+  `../site/content/stories/${bookData.slug}/${bookData.slug}.mp3` :
+  `../content/stories/${bookData.slug}/${bookData.slug}.mp3`;
   mainAudio.appendChild(audioSource);
 }
 
