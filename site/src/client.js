@@ -67,7 +67,8 @@ fetch('content/stories/index.json')
             newBook(book);
         }
     });
-    if (getUrlParam('title')) {
+    const title = getUrlParam('title');
+    if (title) {
       const bookData = books.find(book => book.slug == title);
       bookDisplay(bookData);
 }
