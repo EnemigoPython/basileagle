@@ -199,6 +199,7 @@ function bookDisplay(bookData) {
     mainAudio.appendChild(audioSource);
     if (loadedTime) {
       mainAudio.currentTime = loadedTime;
+      updateUrlParam('time', bookData.slug, loadedTime);
     }
     Array.from(chaptersList.children).forEach(child => {
       chaptersList.removeChild(child);
