@@ -37,6 +37,7 @@ let navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
 let heightPerSection = window.innerHeight / (sectionsY.length + 1);
 
 let prevBook = null;
+let loadedTime = getUrlParam('time');
 
 function getDaysSinceDate(targetDate) {
   const currentDate = new Date();
@@ -66,9 +67,7 @@ fetch('content/stories/index.json')
             newBook(book);
         }
     });
-    const urlParams = new URLSearchParams(window.location.search);
-    const title = urlParams.get('title');
-    if (title) {
+    if (getUrlParam('title')) {
       const bookData = books.find(book => book.slug == title);
       bookDisplay(bookData);
 }
@@ -112,6 +111,11 @@ function removeUrlParam(paramName) {
   const url = new URL(window.location.href);
   url.searchParams.delete(paramName);
   window.history.pushState(null, '', url);
+}
+
+function getUrlParam(paramName) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(paramName);
 }
 
 function formatDate(isoDate) {
@@ -177,7 +181,12 @@ function bookDisplay(bookData) {
     openBookTitle.textContent = `${bookData.title} by ${bookData.author}`;
     openBookPublished.textContent = `Published ${formatDate(bookData.datePublished)}`;
     openBookReleased.textContent = `Released ${formatDate(bookData.released)}`;
-    openBookLink.href = bookData.link;
+    if (bookData.link) {
+      openBookLink.parentNode.style.display = 'inherit';
+      openBookLink.href = bookData.link;
+    } else {
+      openBookLink.parentNode.style.display = 'none';
+    }
     const oldSource = document.querySelector('#main-audio source');
     if (oldSource) {
       mainAudio.removeChild(oldSource);
@@ -186,6 +195,9 @@ function bookDisplay(bookData) {
     audioSource.src = `${bookRelativePath()}${bookData.slug}/${bookData.slug}.mp3`;
     mainAudio.load();
     mainAudio.appendChild(audioSource);
+    if (loadedTime) {
+      mainAudio.currentTime = loadedTime;
+    }
     Array.from(chaptersList.children).forEach(child => {
       chaptersList.removeChild(child);
     });
@@ -262,8 +274,9 @@ dialog.addEventListener("click", e => {
     }
 });
 
-dialog.addEventListener("close", e => {
+dialog.addEventListener("close", () => {
   window.history.pushState(null, '', window.location.origin);
+  loadedTime = null;
 });
 
 
