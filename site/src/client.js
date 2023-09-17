@@ -174,6 +174,7 @@ function secondsToFormatTime(seconds) {
 
 function bookDisplay(bookData) {
   // TODO: de spagetti
+  window.history.pushState(null, '', window.location.origin);
   dialog.showModal();
   if (!isDev) {
     updateUrlParam('title', bookData.slug, 'books');

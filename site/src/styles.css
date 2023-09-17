@@ -123,7 +123,6 @@ nav {
   width: 90%;
   overflow: scroll;
   text-align: center;
-  border: dotted 2px #000;
 }
 
 .chapter {
@@ -200,17 +199,10 @@ section {
   padding: 0;
 }
 
-li {
-  /* margin: 0 10px; */
-}
-
 a:not(#open-book-link) {
   color: white;
   text-decoration: none;
   padding: 10px;
-}
-
-#open-book-link {
 }
 
 a:hover:not(#github-link, .side-nav-link, #open-book-link) {
@@ -339,7 +331,7 @@ p {
 
 #github-container {
   position: fixed;
-  bottom: 20px; /* Adjust the distance from the bottom */
+  bottom: 20px;
   right: 20px;
 }
 
