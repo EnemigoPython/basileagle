@@ -73,22 +73,17 @@ h3 {
   flex-direction: column;
 }
 
-#open-book-title {
-}
-
 .left-page-content {
   margin-left: -35px;
   margin-right: -35px;
   display: flex;
   flex-direction: column;
-  /* justify-content: space-around;
-  flex-grow: 1; */
 }
 
 .right-page-content {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
   flex-grow: 1;
 }
 
@@ -98,15 +93,15 @@ h3 {
   align-items: center;
 }
 
-#about-the-author {
+.audio-section-left {
   justify-content: space-around;
   align-items: center;
   flex-grow: 1;
   padding: 10px;
 }
 
-#about-the-author audio {
-  width: 75%;
+.audio-section-left audio {
+  width: 70%;
 }
 
 audio {
@@ -122,6 +117,29 @@ nav {
   margin-bottom: 20%;
 }
 
+#chapters {
+  align-self: center;
+  height: 60%;
+  width: 90%;
+  overflow: scroll;
+  text-align: center;
+  border: dotted 2px #000;
+}
+
+.chapter {
+  width: 100%;
+  cursor: pointer;
+  list-style: square;
+}
+
+.chapter:hover {
+  background-color: #CCCCCC;
+}
+
+#share-book-container {
+  display: flex;
+  justify-content: space-around;
+}
 
 #top-arrow{
   background-color: white;
@@ -186,14 +204,17 @@ li {
   /* margin: 0 10px; */
 }
 
-a {
+a:not(#open-book-link) {
   color: white;
   text-decoration: none;
   padding: 10px;
 }
 
-a:hover:not(#github-link, .side-nav-link) {
-background-color: #55555577;
+#open-book-link {
+}
+
+a:hover:not(#github-link, .side-nav-link, #open-book-link) {
+  background-color: #55555577;
 }
 
 p {
@@ -220,6 +241,10 @@ p {
     width: 80%;
 }
 
+.left-text {
+  margin-bottom: 0px;
+}
+
 .book {
   width: 165px;
   height: 240px;
@@ -230,7 +255,7 @@ p {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background-color: #F2F2F2;
+  background-color: #F9FBFF;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;

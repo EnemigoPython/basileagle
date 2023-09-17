@@ -11,34 +11,39 @@ const quotation = document.getElementById('quotation');
 const quotationAttribute = document.getElementById('quotation-attribute');
 const openBookTitle = document.getElementById('open-book-title');
 const openBookPublished = document.getElementById('open-book-published');
+const openBookReleased = document.getElementById('open-book-released');
+const openBookLink = document.getElementById('open-book-link');
 const mainAudio = document.getElementById('main-audio');
+const chaptersList = document.getElementById('chapters-list');
+const shareBookBtn = document.getElementById('share-book-btn');
+const includeTitlePosition = document.getElementById('include-title-position');
 
 const bookCoversTotal = 5;
 const startDate = new Date('2023-07-29');
 const dateDelta = getDaysSinceDate(startDate);
 const randomSeed = new Math.seedrandom('book-covers-seed');
+/**
+ * Are we running in the dev env or on the live website?
+ */
 const isDev = new URL(window.location).origin === 'http://127.0.0.1:5500';
 
+const bookRelativePath = () => isDev ?
+    '../site/content/stories/' :
+    '../content/stories/';
 
 let sectionsY = [0].concat(...[library, about, credits, contact].map(s => s.offsetTop));
 let navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
     .map(n => n.offsetTop);
 let heightPerSection = window.innerHeight / (sectionsY.length + 1);
 
-function getDaysSinceDate(targetDate) {
-  // Get the current date
-  const currentDate = new Date();
+let prevBook = null;
 
-  // Convert both dates to UTC to avoid issues with daylight saving time
+function getDaysSinceDate(targetDate) {
+  const currentDate = new Date();
   const utcCurrentDate = Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
   const utcTargetDate = Date.UTC(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
-
-  // Calculate the difference in milliseconds between the two dates
   const timeDifferenceMs = utcCurrentDate - utcTargetDate;
-
-  // Convert milliseconds to days (1 day = 24 hours * 60 minutes * 60 seconds * 1000 milliseconds)
   const daysSince = Math.floor(timeDifferenceMs / (1000 * 60 * 60 * 24));
-
   return daysSince;
 }
 
@@ -73,7 +78,7 @@ fetch('content/stories/index.json')
     console.error('Error:', error);
   });
 
-  fetch('content/quotations.json')
+fetch('content/quotations.json')
   .then(response => response.json())
   .then(quotations => {
     const currentQuotationIndex = dateDelta % quotations.length;
@@ -82,7 +87,17 @@ fetch('content/stories/index.json')
   })
   .catch(error => {
     console.error('Error:', error);
-  });
+});
+
+shareBookBtn.addEventListener('click', () => {
+  if (includeTitlePosition.checked) {
+    const trimmedSeconds = Math.round(mainAudio.currentTime);
+    updateUrlParam('time', trimmedSeconds);
+  } else {
+    removeUrlParam('time');
+  }
+  navigator.clipboard.writeText(window.location);
+})
 
 function updateUrlParam(paramName, paramValue, path) {
   const url = new URL(window.location.href);
@@ -93,14 +108,19 @@ function updateUrlParam(paramName, paramValue, path) {
   window.history.pushState(null, '', url);
 }
 
+function removeUrlParam(paramName) {
+  const url = new URL(window.location.href);
+  url.searchParams.delete(paramName);
+  window.history.pushState(null, '', url);
+}
+
 function formatDate(isoDate) {
   const dateObj = new Date(isoDate);
   const year = dateObj.getFullYear();
   const month = dateObj.getMonth();
   const day = dateObj.getDate();
 
-  // Function to get the day suffix (st, nd, rd, th)
-  function getDaySuffix(day) {
+  const getDaySuffix = (day) => {
     if (day >= 11 && day <= 13) {
       return "th";
     }
@@ -115,28 +135,81 @@ function formatDate(isoDate) {
         return "th";
     }
   }
-
-  // Array of month names
   const monthNames = [
     "January", "February", "March", "April", "May", "June", "July",
     "August", "September", "October", "November", "December"
   ];
-
-  // Assemble the formatted string
   const formattedDate = `${day}${getDaySuffix(day)} of ${monthNames[month]} ${year}`;
   return formattedDate;
 }
 
+/**
+ * 
+ * @param {string} fmtTime 
+ */
+function formatTimeToSeconds(fmtTime) {
+  const timeBlocks = fmtTime.split('.').map(i => parseInt(i));
+  return timeBlocks.reduce((prev, curr, i) => {
+    return prev + (curr * (60 ** (timeBlocks.length - 1 - i)))
+  }, 0);
+}
+
+/**
+ * 
+ * @param {number} seconds 
+ */
+function secondsToFormatTime(seconds) {
+  let secondsStr = '';
+  while (seconds >= 60) {
+
+  }
+  secondsStr += seconds;
+  return secondsStr
+}
+
 function bookDisplay(bookData) {
+  // TODO: de spagetti
   dialog.showModal();
-  updateUrlParam('title', bookData.slug, 'books');
-  openBookTitle.textContent = `${bookData.title} by ${bookData.author}`;
-  openBookPublished.textContent = `Published ${formatDate(bookData.datePublished)}`;
-  const audioSource = document.createElement('source');
-  audioSource.src = isDev ? 
-  `../site/content/stories/${bookData.slug}/${bookData.slug}.mp3` :
-  `../content/stories/${bookData.slug}/${bookData.slug}.mp3`;
-  mainAudio.appendChild(audioSource);
+  if (!isDev) {
+    updateUrlParam('title', bookData.slug, 'books');
+  }
+  if (prevBook !== bookData.slug) {
+    openBookTitle.textContent = `${bookData.title} by ${bookData.author}`;
+    openBookPublished.textContent = `Published ${formatDate(bookData.datePublished)}`;
+    openBookReleased.textContent = `Released ${formatDate(bookData.released)}`;
+    openBookLink.href = bookData.link;
+    const oldSource = document.querySelector('#main-audio source');
+    if (oldSource) {
+      mainAudio.removeChild(oldSource);
+    }
+    const audioSource = document.createElement('source');
+    audioSource.src = `${bookRelativePath()}${bookData.slug}/${bookData.slug}.mp3`;
+    mainAudio.load();
+    mainAudio.appendChild(audioSource);
+    Array.from(chaptersList.children).forEach(child => {
+      chaptersList.removeChild(child);
+    });
+    fetch(`${bookRelativePath()}${bookData.slug}/${bookData.slug}.csv`)
+    .then(response => response.text())
+    .then(chapters => {
+      chapters
+        .split('\n')
+        .splice(1)
+        .map(chapter => chapter.split(','))
+        .forEach(chapter => {
+          const chapterTitle = chapter[0];
+          const chapterEl = document.createElement('li');
+          chapterEl.className = 'chapter';
+          chapterEl.textContent = chapterTitle;
+          // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener#matching_event_listeners_for_removal
+          chapterEl.addEventListener('click', () => {
+            mainAudio.currentTime = formatTimeToSeconds(chapter[1]);
+          });
+          chaptersList.appendChild(chapterEl);
+        });
+    });
+    prevBook = bookData.slug;
+  }
 }
 
 function getSeededNumber(limit) {
