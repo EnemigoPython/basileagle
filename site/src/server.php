@@ -1,6 +1,6 @@
 <?php
 
-$envFile = realpath('.env');
+$envFile = realpath('../.env');
 foreach(file($envFile) as $line) {
     list($key, $value) = explode("=", $line);
     $value = trim(strtr($value, ["'" => ''])); // remove syntax from .env
