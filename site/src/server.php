@@ -12,6 +12,11 @@ $database = $envVars['database'];
 $user_name = $envVars['user_name'];
 $password = $envVars['password'];
 $mysqli = new mysqli($host_name, $user_name, $password, $database);
+if ($mysqli->connect_error) {
+    die('<p>Failed to connect to MySQL: '. $mysqli->connect_error .'</p>');
+} else {
+    echo '<p>Connection to MySQL server successfully established.</p>';
+}
 
 function returnData($query) {
     global $mysqli;
@@ -28,7 +33,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 if ($method == 'GET') {
     switch ($_GET['action']) {
         case "storyText":
-            echo returnData("SELECT * FROM `story_text`");
+            echo returnData('SELECT * FROM `story_text`');
             exit;
         case "test":
             mail("basileagle@gmail.com", "new message", "new message");
