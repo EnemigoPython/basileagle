@@ -74,8 +74,8 @@ h3 {
 }
 
 .left-page-content {
-  margin-left: -35px;
-  margin-right: -35px;
+  margin-left: 10px;
+  margin-right: 10px;
   display: flex;
   flex-direction: column;
 }
@@ -101,7 +101,7 @@ h3 {
 }
 
 .audio-section-left audio {
-  width: 70%;
+  width: 100%;
 }
 
 audio {
@@ -175,9 +175,25 @@ section {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  padding: 3%;
+  padding: 2%;
   font-size: 32px;
   font-weight: bold;
+}
+
+section p, section ul, section th, section td {
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  line-height: 1.5;
+  padding: 12px;
+}
+
+.text-group {
+  border: 2px solid white;
+  background-color: rgba(49, 6, 36, 0.4);
+  border-radius: 16px;
+  max-width: 65%;
+  margin-top: 25px;
+  margin-bottom: 25px;
 }
 
 #library {
@@ -207,11 +223,6 @@ a:not(#open-book-link) {
 
 a:hover:not(#github-link, .side-nav-link, #open-book-link) {
   background-color: #55555577;
-}
-
-p {
-  margin-left: 20%;
-  margin-right: 20%;
 }
 
 .separator {
@@ -327,6 +338,29 @@ p {
 
 .book-cover-5::before {
   background-image: url('../assets/book-cover-5.jpg');
+}
+
+#credits {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.inline-link {
+  color: rgb(236, 231, 191) !important;
+  padding: 0px !important;
+}
+
+td {
+  border: solid 1px white;
+}
+
+th {
+  color: gold;
+}
+
+table {
+  margin-bottom: 65px;
 }
 
 #github-container {

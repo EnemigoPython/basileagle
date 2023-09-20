@@ -1,3 +1,4 @@
+
 const dialog = document.querySelector('dialog');
 const openBook = document.getElementById('open-book');
 const sideNav = document.getElementById('side-nav');
@@ -5,7 +6,7 @@ const navProgress = document.getElementById('nav-progress');
 const library = document.getElementById('library');
 const about = document.getElementById('about');
 const contact = document.getElementById('contact');
-const credits = document.getElementById('credits');
+const blog = document.getElementById('blog');
 const booksInner = document.getElementById('books-inner');
 const quotation = document.getElementById('quotation');
 const quotationAttribute = document.getElementById('quotation-attribute');
@@ -31,7 +32,7 @@ const bookRelativePath = () => isDev ?
     '../site/content/stories/' :
     '../content/stories/';
 
-let sectionsY = [0].concat(...[library, about, credits, contact].map(s => s.offsetTop));
+let sectionsY = [0].concat(...[library, blog, about, contact].map(s => s.offsetTop));
 let navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
     .map(n => n.offsetTop);
 let heightPerSection = window.innerHeight / (sectionsY.length + 1);
@@ -49,16 +50,20 @@ function getDaysSinceDate(targetDate) {
 }
 
 function recalibrateNav() {
-    sectionsY = [0].concat(...[library, about, credits, contact].map(s => s.offsetTop));
+    sectionsY = [0].concat(...[library, blog, about, contact].map(s => s.offsetTop));
     navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
         .map(n => n.offsetTop);
     heightPerSection = window.innerHeight / (sectionsY.length + 1);
 }
 
-onresize = (_) => {
+onresize = () => {
     recalibrateNav();
 };
 
+// onload = () => {
+//   console.log("hi")
+// }
+// TODO: use Promise.all for these
 fetch('content/stories/index.json')
   .then(response => response.json())
   .then(books => {
@@ -157,19 +162,6 @@ function formatTimeToSeconds(fmtTime) {
   return timeBlocks.reduce((prev, curr, i) => {
     return prev + (curr * (60 ** (timeBlocks.length - 1 - i)))
   }, 0);
-}
-
-/**
- * 
- * @param {number} seconds 
- */
-function secondsToFormatTime(seconds) {
-  let secondsStr = '';
-  while (seconds >= 60) {
-
-  }
-  secondsStr += seconds;
-  return secondsStr
 }
 
 function bookDisplay(bookData) {

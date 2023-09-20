@@ -28,7 +28,10 @@ $method = $_SERVER['REQUEST_METHOD'];
 if ($method == 'GET') {
     switch ($_GET['action']) {
         case "storyText":
-            echo returnData("SELECT * FROM story_text");
+            echo returnData("SELECT * FROM `story_text`");
+            exit;
+        case "test":
+            mail("basileagle@gmail.com", "new message", "new message");
             exit;
         default:
             echo json_encode(null);
