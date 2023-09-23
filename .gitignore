@@ -1,9 +1,10 @@
+_blog
 .env
-.venv
 .htaccess
-_blogs
-ideas.txt
-deploy.ps1
-content_util.py
-commands.txt
+.venv
 blog_gen.py
+deploy.ps1
+commands.txt
+content_util.py
+ideas.txt
+sql_util.ps1

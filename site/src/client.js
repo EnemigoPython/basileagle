@@ -1,4 +1,6 @@
-
+/**************************************************************************
+  HTML elements
+**************************************************************************/
 const dialog = document.querySelector('dialog');
 const openBook = document.getElementById('open-book');
 const sideNav = document.getElementById('side-nav');
@@ -40,6 +42,28 @@ let heightPerSection = window.innerHeight / (sectionsY.length + 1);
 let prevBook = null;
 let loadedTime = getUrlParam('time');
 
+/**
+ * Perform an asyncronous fetch operation on file IO/URL
+ * & extract as JSON
+ * @param {string} path 
+ * @returns {Promise<object>}
+ */
+async function fetchJSON(path) {
+  const res = await fetch(path);
+  return await res.json();
+}
+
+/**
+ * Perform an asyncronous fetch operation on file IO/URL
+ * & extract as text
+ * @param {string} path 
+ * @returns {Promise<object>}
+ */
+async function fetchText(path) {
+  const res = await fetch(path);
+  return await res.text();
+}
+
 function getDaysSinceDate(targetDate) {
   const currentDate = new Date();
   const utcCurrentDate = Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
@@ -48,61 +72,6 @@ function getDaysSinceDate(targetDate) {
   const daysSince = Math.floor(timeDifferenceMs / (1000 * 60 * 60 * 24));
   return daysSince;
 }
-
-function recalibrateNav() {
-    sectionsY = [0].concat(...[library, blog, about, contact].map(s => s.offsetTop));
-    navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
-        .map(n => n.offsetTop);
-    heightPerSection = window.innerHeight / (sectionsY.length + 1);
-}
-
-onresize = () => {
-    recalibrateNav();
-};
-
-// onload = () => {
-//   console.log("hi")
-// }
-// TODO: use Promise.all for these
-fetch('content/stories/index.json')
-  .then(response => response.json())
-  .then(books => {
-    books.forEach(book => {
-        if (book.released) {
-            newBook(book);
-        }
-    });
-    const title = getUrlParam('title');
-    if (title) {
-      const bookData = books.find(book => book.slug == title);
-      bookDisplay(bookData);
-}
-    recalibrateNav();
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
-
-fetch('content/quotations.json')
-  .then(response => response.json())
-  .then(quotations => {
-    const currentQuotationIndex = dateDelta % quotations.length;
-    quotation.textContent = quotations[currentQuotationIndex].text;
-    quotationAttribute.textContent = '-' + quotations[currentQuotationIndex].attributed;
-  })
-  .catch(error => {
-    console.error('Error:', error);
-});
-
-shareBookBtn.addEventListener('click', () => {
-  if (includeTitlePosition.checked) {
-    const trimmedSeconds = Math.round(mainAudio.currentTime);
-    updateUrlParam('time', trimmedSeconds);
-  } else {
-    removeUrlParam('time');
-  }
-  navigator.clipboard.writeText(window.location);
-})
 
 function updateUrlParam(paramName, paramValue, path) {
   const url = new URL(window.location.href);
@@ -164,6 +133,89 @@ function formatTimeToSeconds(fmtTime) {
   }, 0);
 }
 
+function recalibrateNav() {
+  sectionsY = [0].concat(...[library, blog, about, contact].map(s => s.offsetTop));
+  navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
+  .map(n => n.offsetTop);
+  heightPerSection = window.innerHeight / (sectionsY.length + 1);
+}
+
+function getSeededNumber(limit) {
+  const newRandom = randomSeed().toString().slice(2);
+  for (const c of newRandom) {
+    if (parseInt(c) <= limit) {
+      return c;
+    }
+  }
+  return "1";
+}
+
+onresize = () => {
+    recalibrateNav();
+};
+
+onload = async () => {
+  await Promise.all([
+    loadBooks(),
+    loadQuotations(),
+    loadBlogPosts()
+  ]);
+  console.log(2);
+  recalibrateNav();
+}
+
+async function loadBooks() {
+  const books = await fetchJSON('content/stories/index.json');
+  books.forEach(book => {
+    if (book.released) {
+        newBook(book);
+    }
+  });
+  const title = getUrlParam('title');
+  if (title) {
+    const bookData = books.find(book => book.slug == title);
+    bookDisplay(bookData);
+  }
+}
+
+async function loadQuotations() {
+  const quotations = await fetchJSON('content/quotations.json');
+  const currentQuotationIndex = dateDelta % quotations.length;
+  quotation.textContent = quotations[currentQuotationIndex].text;
+  quotationAttribute.textContent = '-' + quotations[currentQuotationIndex].attributed;
+}
+
+async function loadBlogPosts() {
+  const blogPosts = await fetchJSON('content/blog/index.json');
+  for (const post of blogPosts) {
+    const postDateEl = document.createElement('div');
+    const postDateLink = document.createElement('a');
+    postDateLink.textContent = formatDate(post.published);
+    postDateLink.href = '#' + post.filename;
+    postDateLink.classList = 'inline-link';
+    postDateEl.classList = 'text-group blog-date';
+    postDateEl.id = post.filename;
+    const postEl = document.createElement('div');
+    postEl.classList = 'text-group blog-post';
+    console.log(post.filename);
+    const postContent = await fetchText(`content/blog/${post.filename}.html`);
+    postEl.innerHTML = postContent;
+    postDateEl.appendChild(postDateLink);
+    blog.appendChild(postDateEl);
+    blog.appendChild(postEl);
+  }
+}
+
+shareBookBtn.addEventListener('click', () => {
+  if (includeTitlePosition.checked) {
+    const trimmedSeconds = Math.round(mainAudio.currentTime);
+    updateUrlParam('time', trimmedSeconds);
+  } else {
+    removeUrlParam('time');
+  }
+  navigator.clipboard.writeText(window.location);
+});
+
 function bookDisplay(bookData) {
   // TODO: de spagetti
   window.history.pushState(null, '', window.location.origin);
@@ -217,16 +269,6 @@ function bookDisplay(bookData) {
     });
     prevBook = bookData.slug;
   }
-}
-
-function getSeededNumber(limit) {
-  const newRandom = randomSeed().toString().slice(2);
-  for (const c of newRandom) {
-    if (parseInt(c) <= limit) {
-      return c;
-    }
-  }
-  return "1";
 }
 
 function newBook(bookData) {

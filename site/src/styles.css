@@ -31,11 +31,11 @@ dialog::backdrop {
   background-color: #3333336c;
 }
 
-h2 {
+h2, h3 {
   text-align: center;
 }
 
-h3 {
+#quotation-attribute {
   text-align: right;
   margin-right: 30%;
 }
@@ -181,8 +181,9 @@ section {
 }
 
 section p, section ul, section th, section td {
-  font-family: Arial, sans-serif;
-  font-size: 18px;
+  font-family: 'Roboto Mono', monospace;
+  font-weight: initial;
+  font-size: 16px;
   line-height: 1.5;
   padding: 12px;
 }
@@ -194,6 +195,19 @@ section p, section ul, section th, section td {
   max-width: 65%;
   margin-top: 25px;
   margin-bottom: 25px;
+}
+
+.blog-date {
+  align-self: baseline;
+  margin-left: 18%;
+  font-size: initial;
+  padding: 5px;
+  margin-bottom: -20px;
+}
+
+.blog-post {
+  font-size: initial;
+  min-width: 65%;
 }
 
 #library {
