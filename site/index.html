@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@1&display=swap">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@200&display=swap" rel="stylesheet">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
@@ -28,13 +27,13 @@
                     <p class="left-text"><a id="open-book-link" target="_blank">Link to text</a></p>
                     <div class="audio-section audio-section-left">
                         <p>About the author:</p>
-                        <audio controls>
+                        <audio controls id="ata-audio">
                         Your browser does not support the audio element.
                         </audio>
                     </div>
                     <div class="audio-section audio-section-left">
                         <p>Commentary:</p>
-                        <audio controls>
+                        <audio controls id="c-audio">
                         Your browser does not support the audio element.
                         </audio>
                     </div>
@@ -72,6 +71,12 @@
             <li class="side-nav-item"><a class="side-nav-link" href="#contact">Contact</a></li>
         </ul>
     </nav>
+    <div id="side-menu">
+        <ul id="side-menu-list">
+            <li class="side-menu-item"><a class="side-menu-link" href="#top">Sort Books</a></li>
+            <li class="side-menu-item"><a class="side-menu-link" href="#library">Random Book</a></li>
+        </ul>
+    </div>
     <div>
         <h1 id="main-title">basileagle</h1>
         <h2 class="quotation-lines">

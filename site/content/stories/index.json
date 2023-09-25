@@ -4,21 +4,22 @@
         "title": "The Trial",
         "author": "Franz Kafka",
         "datePublished": "1925-04-26",
-        "released": "2023-07-22 18:45:59.539918"
+        "released": false
     },
     {
         "slug": "alice-in-wonderland",
         "title": "Alice in Wonderland",
         "author": "Lewis Carroll",
         "datePublished": "1865-11-01",
-        "released": "2023-07-30 16:27:09.340638"
+        "released": false
     },
     {
         "slug": "notes-from-the-underground",
         "title": "Notes from the Underground",
         "author": "Fyodor Dostoevsky",
         "datePublished": "1864-01-01",
-        "released": "2023-07-30 16:27:21.748189"
+        "released": "2023-07-30 16:27:21.748189",
+        "link": "https://gutenberg.org/cache/epub/600/pg600-images.html"
     },
     {
         "slug": "the-black-monk",

@@ -17,6 +17,8 @@ const openBookPublished = document.getElementById('open-book-published');
 const openBookReleased = document.getElementById('open-book-released');
 const openBookLink = document.getElementById('open-book-link');
 const mainAudio = document.getElementById('main-audio');
+const ataAudio = document.getElementById('ata-audio');
+const cAudio = document.getElementById('c-audio');
 const chaptersList = document.getElementById('chapters-list');
 const shareBookBtn = document.getElementById('share-book-btn');
 const includeTitlePosition = document.getElementById('include-title-position');
@@ -43,6 +45,37 @@ let prevBook = null;
 let loadedTime = getUrlParam('time');
 
 /**
+ * Convenience wrapper to create HTML elements
+ */
+class HTMLElementBuilder {
+  constructor(
+    {
+      tag = 'div', 
+      text = '', 
+      innerHTML = '',
+      id = '', 
+      classList = [], 
+      href = '' ,
+      attributes = {},
+      styles = {}
+    }) {
+    this._element = document.createElement(tag);
+    this._element.textContent = text;
+    if (innerHTML) this._element.innerHTML = innerHTML;
+    if (id) this._element.id = id;
+    if (classList.length > 0) this._element.classList.add(...classList);
+    if (href) this._element.href = href;
+    for (const [key, value] of Object.entries(attributes)) {
+      this._element.setAttribute(key, value);
+    }
+    for (const [key, value] of Object.entries(styles)) {
+      this._element.style[key] = value;
+    }
+    return this._element;
+  }
+}
+
+/**
  * Perform an asyncronous fetch operation on file IO/URL
  * & extract as JSON
  * @param {string} path 
@@ -57,7 +90,7 @@ async function fetchJSON(path) {
  * Perform an asyncronous fetch operation on file IO/URL
  * & extract as text
  * @param {string} path 
- * @returns {Promise<object>}
+ * @returns {Promise<string>}
  */
 async function fetchText(path) {
   const res = await fetch(path);
@@ -160,14 +193,13 @@ onload = async () => {
     loadQuotations(),
     loadBlogPosts()
   ]);
-  console.log(2);
   recalibrateNav();
 }
 
 async function loadBooks() {
   const books = await fetchJSON('content/stories/index.json');
   books.forEach(book => {
-    if (book.released) {
+    if (book.released || isDev) {
         newBook(book);
     }
   });
@@ -188,18 +220,21 @@ async function loadQuotations() {
 async function loadBlogPosts() {
   const blogPosts = await fetchJSON('content/blog/index.json');
   for (const post of blogPosts) {
-    const postDateEl = document.createElement('div');
-    const postDateLink = document.createElement('a');
-    postDateLink.textContent = formatDate(post.published);
-    postDateLink.href = '#' + post.filename;
-    postDateLink.classList = 'inline-link';
-    postDateEl.classList = 'text-group blog-date';
-    postDateEl.id = post.filename;
-    const postEl = document.createElement('div');
-    postEl.classList = 'text-group blog-post';
-    console.log(post.filename);
     const postContent = await fetchText(`content/blog/${post.filename}.html`);
-    postEl.innerHTML = postContent;
+    const postDateEl = new HTMLElementBuilder({
+      classList: ['text-group', 'blog-date'],
+      id: post.filename
+    });
+    const postDateLink = new HTMLElementBuilder({
+      tag: 'a',
+      text: formatDate(post.published),
+      href: '#' + post.filename,
+      classList: ['inline-link']
+    });
+    const postEl = new HTMLElementBuilder({
+      innerHTML: postContent,
+      classList: ['text-group', 'blog-post']
+    });
     postDateEl.appendChild(postDateLink);
     blog.appendChild(postDateEl);
     blog.appendChild(postEl);
@@ -216,80 +251,110 @@ shareBookBtn.addEventListener('click', () => {
   navigator.clipboard.writeText(window.location);
 });
 
+function chapterListener(seconds) {
+  mainAudio.currentTime = formatTimeToSeconds(seconds);
+}
+
+function loadAudio(bookData, audioEl, fileSuffix='') {
+  const audioSource = new HTMLElementBuilder({
+    tag: 'source',
+    attributes: {
+      src: `${bookRelativePath()}${bookData.slug}/${bookData.slug}${fileSuffix}.mp3`
+    }
+  });
+  audioEl.load();
+  audioEl.appendChild(audioSource);
+}
+
+async function loadBookData(bookData) {
+  openBookTitle.textContent = `${bookData.title} by ${bookData.author}`;
+  openBookPublished.textContent = `Published ${formatDate(bookData.datePublished)}`;
+  openBookReleased.textContent = `Released ${formatDate(bookData.released)}`;
+  if (bookData.link) {
+    openBookLink.parentNode.style.display = 'inherit';
+    openBookLink.href = bookData.link;
+  } else {
+    openBookLink.parentNode.style.display = 'none';
+  }
+  const oldSources = document.querySelectorAll('source');
+  Array.from(oldSources).forEach(oldSource => {
+    if (oldSource) {
+      oldSource.parentNode.removeChild(oldSource);
+    }
+  });
+  loadAudio(bookData, mainAudio);
+  loadAudio(bookData, ataAudio, '-ata');
+  loadAudio(bookData, cAudio, '-c');
+  if (loadedTime) {
+    mainAudio.currentTime = loadedTime;
+    updateUrlParam('time', loadedTime);
+  }
+  Array.from(chaptersList.children).forEach(child => {
+    // TODO: don't think this works exactly
+    child.removeEventListener('click', chapterListener);
+    chaptersList.removeChild(child);
+  });
+  const chapters = await fetchText(
+    `${bookRelativePath()}${bookData.slug}/${bookData.slug}.csv`
+  );
+  chapters
+    .split('\n')
+    .splice(1)
+    .map(chapter => chapter.split(','))
+    .forEach(chapter => {
+      const [title, time] = chapter;
+      const chapterEl = new HTMLElementBuilder({
+        tag: 'li',
+        text: title,
+        classList: ['chapter'],
+      });
+      chapterEl.addEventListener('click', () => chapterListener(time));
+      chaptersList.appendChild(chapterEl);
+    });
+  prevBook = bookData.slug;
+}
+
 function bookDisplay(bookData) {
-  // TODO: de spagetti
   window.history.pushState(null, '', window.location.origin);
   dialog.showModal();
   if (!isDev) {
     updateUrlParam('title', bookData.slug, 'books');
   }
   if (prevBook !== bookData.slug) {
-    openBookTitle.textContent = `${bookData.title} by ${bookData.author}`;
-    openBookPublished.textContent = `Published ${formatDate(bookData.datePublished)}`;
-    openBookReleased.textContent = `Released ${formatDate(bookData.released)}`;
-    if (bookData.link) {
-      openBookLink.parentNode.style.display = 'inherit';
-      openBookLink.href = bookData.link;
-    } else {
-      openBookLink.parentNode.style.display = 'none';
-    }
-    const oldSource = document.querySelector('#main-audio source');
-    if (oldSource) {
-      mainAudio.removeChild(oldSource);
-    }
-    const audioSource = document.createElement('source');
-    audioSource.src = `${bookRelativePath()}${bookData.slug}/${bookData.slug}.mp3`;
-    mainAudio.load();
-    mainAudio.appendChild(audioSource);
-    if (loadedTime) {
-      mainAudio.currentTime = loadedTime;
-      updateUrlParam('time', loadedTime);
-    }
-    Array.from(chaptersList.children).forEach(child => {
-      chaptersList.removeChild(child);
-    });
-    fetch(`${bookRelativePath()}${bookData.slug}/${bookData.slug}.csv`)
-    .then(response => response.text())
-    .then(chapters => {
-      chapters
-        .split('\n')
-        .splice(1)
-        .map(chapter => chapter.split(','))
-        .forEach(chapter => {
-          const chapterTitle = chapter[0];
-          const chapterEl = document.createElement('li');
-          chapterEl.className = 'chapter';
-          chapterEl.textContent = chapterTitle;
-          // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener#matching_event_listeners_for_removal
-          chapterEl.addEventListener('click', () => {
-            mainAudio.currentTime = formatTimeToSeconds(chapter[1]);
-          });
-          chaptersList.appendChild(chapterEl);
-        });
-    });
-    prevBook = bookData.slug;
+    loadBookData(bookData);
   }
 }
 
 function newBook(bookData) {
-    const book = document.createElement("div");
-    book.setAttribute('data-slug', bookData.slug);
-    book.setAttribute('data-author', bookData.author);
-    book.setAttribute('data-published', bookData.datePublished);
-    book.setAttribute('data-released', bookData.released);
     const coverNumber = getSeededNumber(bookCoversTotal);
-    book.className = `book book-cover-${coverNumber}`;
-    const bookTitle = document.createElement("div");
-    bookTitle.className = 'book-title';
-    bookTitle.textContent = bookData.title;
-    const bookAuthor = document.createElement("div");
-    bookAuthor.className = 'book-author';
-    bookAuthor.textContent = bookData.author;
-    const bookImage = document.createElement("img");
-    bookImage.src = `./content/stories/${bookData.slug}/${bookData.slug}.jpg`;
-    bookImage.alt = '';
-    bookImage.style.opacity = 0.5;
-    bookImage.style.zIndex = 0;
+    const book = new HTMLElementBuilder({
+      classList: ['book', `book-cover-${coverNumber}`],
+      attributes: {
+        'data-slug': bookData.slug,
+        'data-author': bookData.author,
+        'data-published': bookData.datePublished,
+        'data-released': bookData.released
+      }
+    });
+    const bookTitle = new HTMLElementBuilder({
+      text: bookData.title,
+      classList: ['book-title']
+    });
+    const bookAuthor = new HTMLElementBuilder({
+      text: bookData.author,
+      classList: ['book-author']
+    });
+    const bookImage = new HTMLElementBuilder({
+      tag: 'img',
+      attributes: {
+        src: `./content/stories/${bookData.slug}/${bookData.slug}.jpg`,
+        alt: ''
+      },
+      styles: {
+        opacity: 0.5,
+        zIndex: 0
+      }
+    });
     book.appendChild(bookTitle);
     book.appendChild(bookAuthor);
     book.appendChild(bookImage);
