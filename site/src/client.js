@@ -1,8 +1,22 @@
+import { 
+  HTMLElementBuilder,
+  fetchJSON,
+  fetchText,
+  getSeededNumber,
+  getDaysSinceDate,
+  formatDate,
+  formatTimeToSeconds,
+  isDev,
+  bookRelativePath,
+  updateUrlParam,
+  removeUrlParam,
+  getUrlParam
+} from "./util.js";
+
 /**************************************************************************
   HTML elements
 **************************************************************************/
 const dialog = document.querySelector('dialog');
-const openBook = document.getElementById('open-book');
 const sideNav = document.getElementById('side-nav');
 const navProgress = document.getElementById('nav-progress');
 const library = document.getElementById('library');
@@ -23,168 +37,25 @@ const chaptersList = document.getElementById('chapters-list');
 const shareBookBtn = document.getElementById('share-book-btn');
 const includeTitlePosition = document.getElementById('include-title-position');
 
+/**************************************************************************
+  Constants
+**************************************************************************/
 const bookCoversTotal = 5;
 const startDate = new Date('2023-07-29');
 const dateDelta = getDaysSinceDate(startDate);
-const randomSeed = new Math.seedrandom('book-covers-seed');
-/**
- * Are we running in the dev env or on the live website?
- */
-const isDev = new URL(window.location).origin === 'http://127.0.0.1:5500';
 
-const bookRelativePath = () => isDev ?
-    '../site/content/stories/' :
-    '../content/stories/';
-
+/**************************************************************************
+  Globals
+**************************************************************************/
 let sectionsY = [0].concat(...[library, blog, about, contact].map(s => s.offsetTop));
 let navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
     .map(n => n.offsetTop);
 let heightPerSection = window.innerHeight / (sectionsY.length + 1);
-
 let prevBook = null;
 let loadedTime = getUrlParam('time');
 
-/**
- * Convenience wrapper to create HTML elements
- */
-class HTMLElementBuilder {
-  constructor(
-    {
-      tag = 'div', 
-      text = '', 
-      innerHTML = '',
-      id = '', 
-      classList = [], 
-      href = '' ,
-      attributes = {},
-      styles = {}
-    }) {
-    this._element = document.createElement(tag);
-    this._element.textContent = text;
-    if (innerHTML) this._element.innerHTML = innerHTML;
-    if (id) this._element.id = id;
-    if (classList.length > 0) this._element.classList.add(...classList);
-    if (href) this._element.href = href;
-    for (const [key, value] of Object.entries(attributes)) {
-      this._element.setAttribute(key, value);
-    }
-    for (const [key, value] of Object.entries(styles)) {
-      this._element.style[key] = value;
-    }
-    return this._element;
-  }
-}
-
-/**
- * Perform an asyncronous fetch operation on file IO/URL
- * & extract as JSON
- * @param {string} path 
- * @returns {Promise<object>}
- */
-async function fetchJSON(path) {
-  const res = await fetch(path);
-  return await res.json();
-}
-
-/**
- * Perform an asyncronous fetch operation on file IO/URL
- * & extract as text
- * @param {string} path 
- * @returns {Promise<string>}
- */
-async function fetchText(path) {
-  const res = await fetch(path);
-  return await res.text();
-}
-
-function getDaysSinceDate(targetDate) {
-  const currentDate = new Date();
-  const utcCurrentDate = Date.UTC(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-  const utcTargetDate = Date.UTC(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
-  const timeDifferenceMs = utcCurrentDate - utcTargetDate;
-  const daysSince = Math.floor(timeDifferenceMs / (1000 * 60 * 60 * 24));
-  return daysSince;
-}
-
-function updateUrlParam(paramName, paramValue, path) {
-  const url = new URL(window.location.href);
-  url.searchParams.set(paramName, paramValue);
-  if (path) {
-    url.pathname = path;
-  }
-  window.history.pushState(null, '', url);
-}
-
-function removeUrlParam(paramName) {
-  const url = new URL(window.location.href);
-  url.searchParams.delete(paramName);
-  window.history.pushState(null, '', url);
-}
-
-function getUrlParam(paramName) {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get(paramName);
-}
-
-function formatDate(isoDate) {
-  const dateObj = new Date(isoDate);
-  const year = dateObj.getFullYear();
-  const month = dateObj.getMonth();
-  const day = dateObj.getDate();
-
-  const getDaySuffix = (day) => {
-    if (day >= 11 && day <= 13) {
-      return "th";
-    }
-    switch (day % 10) {
-      case 1:
-        return "st";
-      case 2:
-        return "nd";
-      case 3:
-        return "rd";
-      default:
-        return "th";
-    }
-  }
-  const monthNames = [
-    "January", "February", "March", "April", "May", "June", "July",
-    "August", "September", "October", "November", "December"
-  ];
-  const formattedDate = `${day}${getDaySuffix(day)} of ${monthNames[month]} ${year}`;
-  return formattedDate;
-}
-
-/**
- * 
- * @param {string} fmtTime 
- */
-function formatTimeToSeconds(fmtTime) {
-  const timeBlocks = fmtTime.split('.').map(i => parseInt(i));
-  return timeBlocks.reduce((prev, curr, i) => {
-    return prev + (curr * (60 ** (timeBlocks.length - 1 - i)))
-  }, 0);
-}
-
-function recalibrateNav() {
-  sectionsY = [0].concat(...[library, blog, about, contact].map(s => s.offsetTop));
-  navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
-  .map(n => n.offsetTop);
-  heightPerSection = window.innerHeight / (sectionsY.length + 1);
-}
-
-function getSeededNumber(limit) {
-  const newRandom = randomSeed().toString().slice(2);
-  for (const c of newRandom) {
-    if (parseInt(c) <= limit) {
-      return c;
-    }
-  }
-  return "1";
-}
-
 onresize = () => {
-    recalibrateNav();
+  recalibrateNav();
 };
 
 onload = async () => {
@@ -194,6 +65,13 @@ onload = async () => {
     loadBlogPosts()
   ]);
   recalibrateNav();
+}
+
+function recalibrateNav() {
+  sectionsY = [0].concat(...[library, blog, about, contact].map(s => s.offsetTop));
+  navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
+  .map(n => n.offsetTop);
+  heightPerSection = window.innerHeight / (sectionsY.length + 1);
 }
 
 async function loadBooks() {
@@ -224,17 +102,17 @@ async function loadBlogPosts() {
     const postDateEl = new HTMLElementBuilder({
       classList: ['text-group', 'blog-date'],
       id: post.filename
-    });
+    }).element;
     const postDateLink = new HTMLElementBuilder({
       tag: 'a',
       text: formatDate(post.published),
       href: '#' + post.filename,
       classList: ['inline-link']
-    });
+    }).element;
     const postEl = new HTMLElementBuilder({
       innerHTML: postContent,
       classList: ['text-group', 'blog-post']
-    });
+    }).element;
     postDateEl.appendChild(postDateLink);
     blog.appendChild(postDateEl);
     blog.appendChild(postEl);
@@ -261,7 +139,7 @@ function loadAudio(bookData, audioEl, fileSuffix='') {
     attributes: {
       src: `${bookRelativePath()}${bookData.slug}/${bookData.slug}${fileSuffix}.mp3`
     }
-  });
+  }).element;
   audioEl.load();
   audioEl.appendChild(audioSource);
 }
@@ -307,7 +185,7 @@ async function loadBookData(bookData) {
         tag: 'li',
         text: title,
         classList: ['chapter'],
-      });
+      }).element;
       chapterEl.addEventListener('click', () => chapterListener(time));
       chaptersList.appendChild(chapterEl);
     });
@@ -335,15 +213,15 @@ function newBook(bookData) {
         'data-published': bookData.datePublished,
         'data-released': bookData.released
       }
-    });
+    }).element;
     const bookTitle = new HTMLElementBuilder({
       text: bookData.title,
       classList: ['book-title']
-    });
+    }).element;
     const bookAuthor = new HTMLElementBuilder({
       text: bookData.author,
       classList: ['book-author']
-    });
+    }).element;
     const bookImage = new HTMLElementBuilder({
       tag: 'img',
       attributes: {
@@ -354,7 +232,7 @@ function newBook(bookData) {
         opacity: 0.5,
         zIndex: 0
       }
-    });
+    }).element;
     book.appendChild(bookTitle);
     book.appendChild(bookAuthor);
     book.appendChild(bookImage);
@@ -380,7 +258,6 @@ dialog.addEventListener("close", () => {
   window.history.pushState(null, '', window.location.origin);
   loadedTime = null;
 });
-
 
 document.addEventListener('scroll', _ => {
     if (scrollY < 120) {
