@@ -127,6 +127,15 @@ async function loadBlogPosts() {
   }
 }
 
+Array.from(document.querySelectorAll('.side-nav-link')).forEach(nav => {
+  nav.addEventListener('click', () => {
+    for (const menuItem of sideMenuBtns.flat()) {
+      const el = document.getElementById(`${menuItem}-item`);
+      el.hidden = true;
+    }
+  });
+});
+
 shareBookBtn.addEventListener('click', () => {
   if (includeTitlePosition.checked) {
     const trimmedSeconds = Math.round(mainAudio.currentTime);

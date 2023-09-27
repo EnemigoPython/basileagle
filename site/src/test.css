@@ -1,0 +1,66 @@
+/* Reset default styles for the audio element */
+audio {
+    width: 50%;
+    height: auto;
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+/* Style the container */
+.audio-container {
+    background-color: #333;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Style the audio controls */
+audio::-webkit-media-controls {
+    background-color: #333;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+/* Style the play and volume buttons */
+audio::-webkit-media-controls-play-button,
+audio::-webkit-media-controls-mute-button {
+    background-color: #0066cc;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+/* Style the seek slider */
+audio::-webkit-media-controls-timeline {
+    background-color: transparent;
+}
+
+/* Style the volume slider */
+audio::-webkit-media-controls-volume-slider {
+    background-color: #0066cc;
+    border-radius: 5px;
+}
+
+/* Style the time display */
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display {
+    color: #fff;
+    font-size: 14px;
+}
+
+/* Style the progress bar */
+audio::-webkit-media-controls-seek-back-button,
+audio::-webkit-media-controls-seek-forward-button,
+audio::-webkit-media-controls-rewind-button,
+audio::-webkit-media-controls-return-to-realtime-button,
+audio::-webkit-media-controls-toggle-closed-captions-button,
+audio::-webkit-media-controls-volume-control-container,
+audio::-webkit-media-controls-toggle-closed-captions-button,
+audio::-webkit-media-controls-toggle-fullscreen-button,
+audio::-webkit-media-controls-volume-slider-container {
+    display: none;
+}
