@@ -120,6 +120,11 @@ function formatTimeToSeconds(fmtTime) {
  */
 const isDev = new URL(window.location).origin === 'http://127.0.0.1:5500';
 
+/**
+ * Is the client a mobile device?
+ */
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
 const bookRelativePath = () => isDev ?
     '../site/content/stories/' :
     '../content/stories/';
@@ -154,6 +159,7 @@ export {
     formatDate,
     formatTimeToSeconds,
     isDev,
+    isMobile,
     bookRelativePath,
     updateUrlParam,
     removeUrlParam,

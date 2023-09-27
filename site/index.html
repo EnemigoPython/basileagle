@@ -73,8 +73,13 @@
     </nav>
     <div id="side-menu">
         <ul id="side-menu-list">
-            <li class="side-menu-item"><a class="side-menu-link" href="#top">Sort Books</a></li>
-            <li class="side-menu-item"><a class="side-menu-link" href="#library">Random Book</a></li>
+            <li class="side-menu-item" id="search-books-item" hidden><button class="side-menu-btn">Search Books</a></li>
+            <li class="side-menu-item" id="sort-books-item" hidden><button class="side-menu-btn">Sort Books</a></li>
+            <li class="side-menu-item" id="random-book-item" hidden><button class="side-menu-btn">Random Book</a></li>
+            <li class="side-menu-item" id="sort-posts-item" hidden><button class="side-menu-btn">Sort Posts</a></li>
+            <li class="side-menu-item" id="random-post-item" hidden><button class="side-menu-btn">Random Post</a></li>
+            <li class="side-menu-item" id="credits-item" hidden><a href="#credits" class="side-menu-a">Credits</a></li>
+            <li class="side-menu-item" id="comments-item" hidden><a href="#comments" class="side-menu-a">Comments</a></li>
         </ul>
     </div>
     <div>
@@ -162,9 +167,9 @@
             <p>Send me an email: <a href="mailto:basileagle@gmail.com?subject=basileagle.co.uk" class="inline-link">basileagle@gmail.com</a></p>
         </div>
         <div class="text-group">
-            <p>Leave a comment: </p>
+            <p>Leave a comment: <input type="" id="comment-text"></p>
         </div>
-        <div class="text-group">
+        <div class="text-group" id="comments">
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa iusto consequatur cum laboriosam sed harum incidunt adipisci possimus eos, facere cumque quisquam quod praesentium fuga nulla, iure explicabo exercitationem sapiente!</p>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa iusto consequatur cum laboriosam sed harum incidunt adipisci possimus eos, facere cumque quisquam quod praesentium fuga nulla, iure explicabo exercitationem sapiente!</p>
         </div>

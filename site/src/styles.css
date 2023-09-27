@@ -166,7 +166,6 @@ nav {
 }
 
 #top-nav {
-  margin-top: -10px;
   flex-direction: row;
 }
 
@@ -228,22 +227,38 @@ section p, section ul, section th, section td {
   justify-content: space-evenly;
   list-style: none;
   padding: 0;
+  top: -3%
 }
 
 #side-menu {
   position: fixed;
   height: 100%;
+  right: 10%;
 }
 
 #side-menu-list {
   position: absolute;
-  right: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
   list-style: none;
+  padding: 0;
+  top: -3%
+}
+
+.side-menu-btn {
+  background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
+
+.side-menu-a {
   padding: 0;
 }
 
@@ -253,7 +268,7 @@ a:not(#open-book-link) {
   padding: 10px;
 }
 
-a:hover:not(#github-link, .side-nav-link, #open-book-link) {
+a:hover:not(#github-link, .side-nav-link, #open-book-link, .side-menu-a) {
   background-color: #55555577;
 }
 
@@ -396,6 +411,11 @@ table {
   word-break: break-all;
 }
 
+#comment-text {
+  background-color: rgba(122, 22, 92, 0.4);
+  color: #F9FBFF;
+}
+
 #github-container {
   position: fixed;
   bottom: 20px;
@@ -411,4 +431,18 @@ table {
 #github:hover {
   filter: brightness(2);
   cursor: pointer;
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 0.2s ease-in 0.6s forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }

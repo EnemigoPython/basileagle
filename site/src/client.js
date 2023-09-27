@@ -7,6 +7,7 @@ import {
   formatDate,
   formatTimeToSeconds,
   isDev,
+  isMobile,
   bookRelativePath,
   updateUrlParam,
   removeUrlParam,
@@ -43,6 +44,12 @@ const includeTitlePosition = document.getElementById('include-title-position');
 const bookCoversTotal = 5;
 const startDate = new Date('2023-07-29');
 const dateDelta = getDaysSinceDate(startDate);
+const sideMenuBtns = [
+  ['search-books', 'sort-books', 'random-book'],
+  ['sort-posts', 'random-post'],
+  ['credits'],
+  ['comments']
+];
 
 /**************************************************************************
   Globals
@@ -52,6 +59,7 @@ let navLinksY = Array.from(document.querySelectorAll('.side-nav-item'))
     .map(n => n.offsetTop);
 let heightPerSection = window.innerHeight / (sectionsY.length + 1);
 let prevBook = null;
+let prevIdx = -1;
 let loadedTime = getUrlParam('time');
 
 onresize = () => {
@@ -242,6 +250,27 @@ function newBook(bookData) {
     });
 }
 
+/**
+ * Display or hide side menu items based on scroll index
+ * @param {number} idx 
+ */
+function sideMenuDisplay(idx) {
+  if (idx < 0 || idx == prevIdx) {
+    return;
+  }
+  prevIdx = idx;
+  for (const menuItem of sideMenuBtns.flat()) {
+    const el = document.getElementById(`${menuItem}-item`);
+    console.log(sideMenuBtns[idx]);
+    const shouldShow = !sideMenuBtns[idx].includes(menuItem);
+    el.hidden = shouldShow;
+    if (shouldShow) {
+      el.classList.remove('fade-in');
+      el.classList.add('fade-in');
+    }
+  }
+}
+
 dialog.addEventListener("click", e => {
     const dialogDimensions = dialog.getBoundingClientRect();
     if (
@@ -254,14 +283,21 @@ dialog.addEventListener("click", e => {
     }
 });
 
-dialog.addEventListener("close", () => {
+dialog.addEventListener('close', () => {
   window.history.pushState(null, '', window.location.origin);
   loadedTime = null;
 });
 
 document.addEventListener('scroll', _ => {
     if (scrollY < 120) {
-        sideNav.style.display = 'none';
+      sideNav.style.display = 'none';
+      if (prevIdx != -1) {
+          prevIdx = -1;
+          for (const menuItem of sideMenuBtns.flat()) {
+            const el = document.getElementById(`${menuItem}-item`);
+            el.hidden = true;
+          }
+        }
         return;
     }
     sideNav.style.display = 'flex';
@@ -286,5 +322,6 @@ document.addEventListener('scroll', _ => {
         } else {
             n.querySelector('a').style.color = 'white';
         }
-    })
+    });
+    sideMenuDisplay(nextSectionIdx-2);
 });
